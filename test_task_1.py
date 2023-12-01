@@ -1,5 +1,4 @@
 from test_1 import is_log_line, get_dict
-from test_2 import get_closest_court
 
 
 def test_valid_log():
@@ -21,12 +20,3 @@ def test_get_dict():
         "message": ":.main: *************** RSVP Agent started ***************",
     }
     assert get_dict(correct_line) == expected
-
-
-def test_get_closest_court():
-    """tests whether the court with the shortest court is returned"""
-    courts = [
-        {"distance": 0.5},
-        {"distance": 1.0}
-    ]
-    assert get_closest_court(courts) == {"distance": 0.5}
