@@ -68,21 +68,22 @@
 # - nearest court of the right type
 # - the dx_number (if available) of the nearest court of the right type
 # - the distance to the nearest court of the right type
-
-import requests
 import os
 
+import requests
 import pandas as pd
 
 
 BASE_URL = "https://www.find-court-tribunal.service.gov.uk"
 OUTPUT_DIRECTORY = "test_2_output"
+TIME_OUT = 5
 
 
 def get_courts(postcode: str) -> dict:
     """calls the api and returns courts for the given address"""
     response = requests.get(
-        f"{BASE_URL}/search/results.json?postcode={postcode}"
+        f"{BASE_URL}/search/results.json?postcode={postcode}",
+        timeout=TIME_OUT
     )
     json_obj = response.json()
     return json_obj
@@ -117,7 +118,7 @@ def write_to_text_file(person: list, court: dict, file_path: str) -> None:
     court_name = court["name"]
     dx_number = court.get("dx_number")
     distance = court["distance"]
-    with open(file_path, "a+") as file:
+    with open(file_path, "a+", encoding="utf-8") as file:
         file.write("\n".join([
             f"Person: {person_name}",
             f"Postcode: {postcode}",
@@ -135,8 +136,8 @@ def main():
 
     output_file_path = os.path.join(OUTPUT_DIRECTORY, "output.txt")
 
-    df = pd.read_csv("people.csv")
-    people = df.to_numpy()
+    data_frame = pd.read_csv("people.csv")
+    people = data_frame.to_numpy()
 
     for person in people:
         postcode = person[1]
