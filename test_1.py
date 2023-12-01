@@ -5,23 +5,43 @@
 # There's no perfect way to do this: just decide what you think is reasonable to get
 # the test to pass. The only thing you are not allowed to do is filter out log lines
 # based on the exact row numbers you want to remove.
-def is_log_line(line):
+from datetime import datetime
+
+
+def is_log_line(line) -> bool:
     """Takes a log line and returns True if it is a valid log line and returns nothing
     if it is not.
     """
+    fragments = line.split(" ")
+    if len(fragments) < 4:
+        return None
     return True
-
 
 # [TODO]: step 2
 # Update the get_dict function below so it converts a line of the logs into a
 # dictionary with keys for "timestamp", "log_level", and "message". The valid log
 # levels are `INFO`, `TRACE`, and `WARNING`. See lines 67 to 71 for how we expect the
 # results to look.
+
+
 def get_dict(line):
     """Takes a log line and returns a dict with
     `timestamp`, `log_level`, `message` keys
     """
-    pass
+    fragments = line.split(" ")
+    date = fragments[0]
+    time = fragments[1]
+
+    fragments_2 = line.split(" :")
+
+    message = ":" + fragments_2[-1][:-1]
+    timestamp = date + " " + time
+    log_level = fragments[2]
+    return {
+        "timestamp": timestamp,
+        "log_level": log_level,
+        "message": message
+    }
 
 
 # YOU DON'T NEED TO CHANGE ANYTHING BELOW THIS LINE
