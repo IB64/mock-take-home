@@ -69,6 +69,83 @@
 # - the dx_number (if available) of the nearest court of the right type
 # - the distance to the nearest court of the right type
 
+import requests
+import os
+
+import pandas as pd
+
+
+BASE_URL = "https://www.find-court-tribunal.service.gov.uk"
+OUTPUT_DIRECTORY = "test_2_output"
+
+
+def get_courts(postcode: str) -> dict:
+    """calls the api and returns courts for the given address"""
+    response = requests.get(
+        f"{BASE_URL}/search/results.json?postcode={postcode}"
+    )
+    json_obj = response.json()
+    return json_obj
+
+
+def get_desired_courts(desired_type: str, courts: list[dict]):
+    """from the given courts, return the courts with the desired types"""
+    desired_courts = []
+    for court in courts:
+        if desired_type in court["types"]:
+            desired_courts.append(court)
+    return desired_courts
+
+
+def get_closest_court(courts: list[dict]) -> dict:
+    """from a list of courts, return the court with the shortest distance"""
+    shortest = 0
+    position = 0
+    for index, court in enumerate(courts):
+        distance = court["distance"]
+        if distance < shortest:
+            shortest = distance
+            position = index
+    return courts[position]
+
+
+def write_to_text_file(person: list, court: dict, file_path: str) -> None:
+    """given a court, write the wanted details to an output file"""
+    person_name = person[0]
+    postcode = person[1]
+    desire = person[2]
+    court_name = court["name"]
+    dx_number = court.get("dx_number")
+    distance = court["distance"]
+    with open(file_path, "a+") as file:
+        file.write("\n".join([
+            f"Person: {person_name}",
+            f"Postcode: {postcode}",
+            f"Wanted Court: {desire}",
+            f"Name of Court Found: {court_name}",
+            f"DX Number (if applicable): {dx_number}",
+            f"Distance: {distance}",
+        ]) + "\n\n")
+
+
+def main():
+    """main logic of script"""
+    if not os.path.exists(OUTPUT_DIRECTORY):
+        os.makedirs(OUTPUT_DIRECTORY)
+
+    output_file_path = os.path.join(OUTPUT_DIRECTORY, "output.txt")
+
+    df = pd.read_csv("people.csv")
+    people = df.to_numpy()
+
+    for person in people:
+        postcode = person[1]
+        court_type = person[2]
+        courts_available = get_courts(postcode)
+        courts_wanted = get_desired_courts(court_type, courts_available)
+        closest_court = get_closest_court(courts_wanted)
+        write_to_text_file(person, closest_court, output_file_path)
+
+
 if __name__ == "__main__":
-    # [TODO]: write your answer here
-    pass
+    main()
