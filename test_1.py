@@ -1,19 +1,52 @@
-# [TODO]: step 1
-# Update the is_log_line function below to skip lines that are not valid log lines.
-# Valid log lines have a timestamp, error type, and message. For example, lines 1, 3,
-# 7 and 37 are all examples of lines (from sample.log) that would be filtered out.
-# There's no perfect way to do this: just decide what you think is reasonable to get
-# the test to pass. The only thing you are not allowed to do is filter out log lines
-# based on the exact row numbers you want to remove.
+import re
+
+LOG_LEVELS = ("INFO", "TRACE", "WARNING")
+
+
+def is_viable_date(date_str: str) -> bool:
+    """checks whether the date in the log line is viable using a regex"""
+    pattern = r"^(0[1-9]|1[0-9]|2[0-8])/(0[1-9]|1[0-2])/\d{2}$|^(29|30)/(0[13-9]|1[0-2])/\d{2}$|^(31)/(0[13578]|1[02])/\d{2}$"
+    if re.match(pattern, date_str):
+        return True
+    else:
+        return False
+
+
+def is_viable_time(time_str: str) -> bool:
+    """checks whether the time in the log line is viable using a regex"""
+    pattern = r"^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+    if re.match(pattern, time_str):
+        return True
+    else:
+        return False
+
+
+def is_viable_log_level(log_level: str) -> bool:
+    """checks whether the log level in the log is viable"""
+    if log_level in LOG_LEVELS:
+        return True
+    return False
 
 
 def is_log_line(line) -> bool | None:
-    """Takes a log line and returns True if it is a valid log line and returns nothing
+    """Takes a log line and returns True if it is a valid log line and returns None
     if it is not.
     """
     fragments = line.split(" ")
     if len(fragments) < 4:
         return None
+
+    date = fragments[0]
+    time = fragments[1]
+    log_level = fragments[2]
+
+    if not is_viable_date(date):
+        return None
+    if not is_viable_time(time):
+        return None
+    if not is_viable_log_level(log_level):
+        return None
+
     return True
 
 
@@ -22,14 +55,14 @@ def get_dict(line) -> dict:
     `timestamp`, `log_level`, `message` keys
     """
     fragments = line.split(" ")
+    while "" in fragments:
+        fragments.remove("")
+
     date = fragments[0]
     time = fragments[1]
-
-    fragments_2 = line.split(" :")
-
-    message = ":" + fragments_2[-1][:-1]
     timestamp = date + " " + time
     log_level = fragments[2]
+    message = " ".join(fragments[3:])[:-1]
     return {
         "timestamp": timestamp,
         "log_level": log_level,

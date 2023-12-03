@@ -30,6 +30,3 @@ def sum_current_time(time_str: str) -> int:
     validate_numbers(list_of_nums)
 
     return sum(int(num) for num in list_of_nums)
-
-
-# sum_current_time("23:0:45")
