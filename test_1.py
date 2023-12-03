@@ -18,9 +18,7 @@ def is_viable_time(time_str: str) -> bool:
 
 def is_viable_log_level(log_level: str) -> bool:
     """checks whether the log level in the log is viable"""
-    if log_level in LOG_LEVELS:
-        return True
-    return False
+    return bool(log_level in LOG_LEVELS)
 
 
 def is_log_line(line) -> bool | None:
