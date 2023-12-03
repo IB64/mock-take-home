@@ -1,3 +1,4 @@
+"""script to run task 2"""
 import os
 
 import requests
@@ -39,7 +40,7 @@ def get_closest_court(courts: list[dict]) -> dict:
         # if no distance key, continue
         try:
             distance = court["distance"]
-        except:
+        except KeyError:
             continue
         if distance < shortest:
             shortest = distance
@@ -48,8 +49,7 @@ def get_closest_court(courts: list[dict]) -> dict:
     # if no courts with "distance" key is found, return empty dict
     if position < 0:
         return {}
-    else:
-        return courts[position]
+    return courts[position]
 
 
 def write_to_text_file(file_path: str, message: str):
