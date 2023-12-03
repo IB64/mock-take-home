@@ -42,23 +42,43 @@ def get_closest_court(courts: list[dict]) -> dict:
     return courts[position]
 
 
-def write_to_text_file(person: list, court: dict, file_path: str) -> None:
-    """given a court, write the wanted details to an output file"""
+def write_to_text_file(file_path: str, message: str):
+    """write to .txt file"""
+    with open(file_path, "a+", encoding="utf-8") as file:
+        file.write(message)
+
+
+def write_success(person: list, court: dict, file_path: str) -> None:
+    """write the necessary details for a successful search"""
     person_name = person[0]
     postcode = person[1]
     desire = person[2]
     court_name = court["name"]
     dx_number = court.get("dx_number")
     distance = court["distance"]
-    with open(file_path, "a+", encoding="utf-8") as file:
-        file.write("\n".join([
-            f"Person: {person_name}",
-            f"Postcode: {postcode}",
-            f"Wanted Court: {desire}",
-            f"Name of Court Found: {court_name}",
-            f"DX Number (if applicable): {dx_number}",
-            f"Distance: {distance}",
-        ]) + "\n\n")
+    message = "\n".join([
+        f"Person: {person_name}",
+        f"Postcode: {postcode}",
+        f"Wanted Court: {desire}",
+        f"Name of Court Found: {court_name}",
+        f"DX Number (if applicable): {dx_number}",
+        f"Distance: {distance}",
+    ]) + "\n\n"
+    write_to_text_file(file_path, message)
+
+
+def write_no_court_found(person: list, file_path: str):
+    """write the message where no courts are found for a person"""
+    person_name = person[0]
+    postcode = person[1]
+    desire = person[2]
+    message = "\n".join([
+        "No court found for:"
+        f"Person: {person_name}",
+        f"Postcode: {postcode}",
+        f"Wanted Court: {desire}"
+    ])
+    write_to_text_file(file_path, message)
 
 
 def main() -> None:
@@ -74,9 +94,15 @@ def main() -> None:
         postcode = person[1]
         court_type = person[2]
         courts_available = get_courts(postcode)
+        if not courts_available:
+            write_no_court_found(person, output_file_path)
+            continue
         courts_wanted = get_desired_courts(court_type, courts_available)
+        if not courts_wanted:
+            write_no_court_found(person, output_file_path)
+            continue
         closest_court = get_closest_court(courts_wanted)
-        write_to_text_file(person, closest_court, output_file_path)
+        write_success(person, closest_court, output_file_path)
 
 
 if __name__ == "__main__":
