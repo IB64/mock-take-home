@@ -1,3 +1,4 @@
+"""script to run task_1"""
 import re
 
 LOG_LEVELS = ("INFO", "TRACE", "WARNING")
@@ -6,19 +7,13 @@ LOG_LEVELS = ("INFO", "TRACE", "WARNING")
 def is_viable_date(date_str: str) -> bool:
     """checks whether the date in the log line is viable using a regex"""
     pattern = r"^(0[1-9]|1[0-9]|2[0-8])/(0[1-9]|1[0-2])/\d{2}$|^(29|30)/(0[13-9]|1[0-2])/\d{2}$|^(31)/(0[13578]|1[02])/\d{2}$"
-    if re.match(pattern, date_str):
-        return True
-    else:
-        return False
+    return bool(re.match(pattern, date_str))
 
 
 def is_viable_time(time_str: str) -> bool:
     """checks whether the time in the log line is viable using a regex"""
     pattern = r"^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
-    if re.match(pattern, time_str):
-        return True
-    else:
-        return False
+    return bool(re.match(pattern, time_str))
 
 
 def is_viable_log_level(log_level: str) -> bool:
