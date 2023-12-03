@@ -14,7 +14,7 @@ def is_viable_date(date_str: str) -> bool:
 
 def is_viable_time(time_str: str) -> bool:
     """checks whether the time in the log line is viable using a regex"""
-    pattern = r"^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+    pattern = r"^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
     if re.match(pattern, time_str):
         return True
     else:

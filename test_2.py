@@ -65,7 +65,6 @@ def main() -> None:
     """main logic of script"""
     if not os.path.exists(OUTPUT_DIRECTORY):
         os.makedirs(OUTPUT_DIRECTORY)
-
     output_file_path = os.path.join(OUTPUT_DIRECTORY, "output.txt")
 
     data_frame = pd.read_csv("people.csv")

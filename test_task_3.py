@@ -51,3 +51,7 @@ def test_sum_invalid_input():
     # invalid format
     with pytest.raises(ValueError):
         sum_current_time("9:3:4")
+
+    # no leading 0
+    with pytest.raises(ValueError):
+        sum_current_time("1:30:45")
