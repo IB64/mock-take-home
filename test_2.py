@@ -31,15 +31,25 @@ def get_desired_courts(desired_type: str, courts: list[dict]) -> list:
 
 
 def get_closest_court(courts: list[dict]) -> dict:
-    """from a list of courts, return the court with the shortest distance"""
-    shortest = 0
-    position = 0
+    """from a list of courts, return the court with the shortest distance.
+    If "distance" key is not found, then return an empty list"""
+    shortest = float("inf")
+    position = -1
     for index, court in enumerate(courts):
-        distance = court["distance"]
+        # if no distance key, continue
+        try:
+            distance = court["distance"]
+        except:
+            continue
         if distance < shortest:
             shortest = distance
             position = index
-    return courts[position]
+
+    # if no courts with "distance" key is found, return empty dict
+    if position < 0:
+        return {}
+    else:
+        return courts[position]
 
 
 def write_to_text_file(file_path: str, message: str):
@@ -94,15 +104,13 @@ def main() -> None:
         postcode = person[1]
         court_type = person[2]
         courts_available = get_courts(postcode)
-        if not courts_available:
-            write_no_court_found(person, output_file_path)
-            continue
         courts_wanted = get_desired_courts(court_type, courts_available)
-        if not courts_wanted:
-            write_no_court_found(person, output_file_path)
-            continue
         closest_court = get_closest_court(courts_wanted)
-        write_success(person, closest_court, output_file_path)
+
+        if not courts_available or not courts_wanted or not closest_court:
+            write_no_court_found(person, output_file_path)
+        else:
+            write_success(person, closest_court, output_file_path)
 
 
 if __name__ == "__main__":
