@@ -83,11 +83,10 @@ def write_no_court_found(person: list, file_path: str):
     postcode = person[1]
     desire = person[2]
     message = "\n".join([
-        "No court found for:"
-        f"Person: {person_name}",
+        f"No court found for: {person_name}",
         f"Postcode: {postcode}",
         f"Wanted Court: {desire}"
-    ])
+    ]) + "\n\n"
     write_to_text_file(file_path, message)
 
 
